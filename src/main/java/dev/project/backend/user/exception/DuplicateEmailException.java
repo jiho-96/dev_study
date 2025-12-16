@@ -1,8 +1,11 @@
 package dev.project.backend.user.exception;
 
-public class DuplicateEmailException extends RuntimeException {
+import dev.project.backend.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class DuplicateEmailException extends BusinessException {
 
     public DuplicateEmailException() {
-        super("user.signup.duplicate");
+        super("user.signup.duplicate", HttpStatus.CONFLICT);
     }
 }

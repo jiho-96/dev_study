@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SignupRequestDTO {
+
+    @NotBlank(message = "{user.name.notBlank}")
+    private String name;
+
     @NotBlank(message = "{user.email.notBlank}")
     @Email(message = "{user.email.invalid}")
     private String email;
@@ -17,6 +21,11 @@ public class SignupRequestDTO {
     @Size(min = 8, max = 12, message = "{user.password.size}")
     private String password;
 
-    @NotBlank(message = "{user.name.notBlank}")
-    private String name;
+    @NotBlank(message = "{user.passwordConfirm.required}")
+    private String passwordConfirm;
+
+    public boolean isPasswordMatched() {
+        return password != null && password.equals(passwordConfirm);
+    }
+
 }

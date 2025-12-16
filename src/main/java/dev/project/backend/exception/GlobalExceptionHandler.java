@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,9 +34,9 @@ public class GlobalExceptionHandler {
             .body(new ErrorResponse(messages));
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateEmail(
-        DuplicateEmailException e) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(
+        BusinessException e) {
 
         String message = messageSource.getMessage(
             e.getMessage(),
@@ -44,7 +45,21 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity
+            .status(e.getStatus())
+            .body(new ErrorResponse(List.of(message)));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation() {
+
+        String message = messageSource.getMessage(
+            "error.data.integrity",
+            null,
+            LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(new ErrorResponse(List.of(message))); // ✅ 타입 맞추기
+            .body(new ErrorResponse(List.of(message)));
     }
 }
